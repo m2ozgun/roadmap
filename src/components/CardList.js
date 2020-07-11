@@ -21,19 +21,31 @@ class CardList extends React.Component {
             },
           ]
         return (
-<div class="mw8 center ph3-ns">
-  <div class="cf ph2-ns">
-    <div class="fl w-33 pa2">
-      <div class="outline bg-white pv4"></div>
-    </div>
-    <div class="fl w-33 pa2">
-      <div class="outline bg-white pv4"></div>
-    </div>
-    <div class="fl w-33 pa2">
-      <div class="outline bg-white pv4"></div>
-    </div>
-  </div>
-</div>
+            <div className="mw8 center ph3-ns">
+                <div className="cf ph2-ns">
+                    <div className="fl w-33 pa2">
+                    <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">In progress</h1>
+
+                            {cardsToRender.map(card => <Card key={card.id} card={card} />)}
+                    </div>
+                <div className="fl w-33 pa2">
+                <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">Soon</h1>
+
+                            {cardsToRender.map(card => (
+                                    <Card key={card.id} card={card} />
+
+                            ))}                
+                </div>
+                <div className="fl w-33 pa2">
+                <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">Future</h1>
+
+                            {cardsToRender.map(card => (
+                                    <Card key={card.id} card={card} />
+
+                            ))}
+                </div>
+            </div>
+            </div>
         )
     }
 }
