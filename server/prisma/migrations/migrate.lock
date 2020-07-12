@@ -1,0 +1,6 @@
+# Prisma Migrate lockfile v1
+
+20200711165342-init
+20200711171746-update
+20200711175945-add-vote-model
+20200712130039-card-update

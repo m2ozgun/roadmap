@@ -1,0 +1,63 @@
+type Query {
+  info: String!
+  feed(filter: String, skip: Int, take: Int, orderBy: CardOrderByInput): Feed!
+  card(id: ID!): Card
+
+}
+
+type Feed {
+  cards: [Card!]!
+  count: Int!
+}
+
+input CardOrderByInput {
+  description: Sort
+  list: Sort
+  title: Sort
+  createdAt: Sort
+}
+
+enum Sort {
+  asc
+  desc
+}
+
+type Subscription {
+  newCard: Card
+  newVote: Vote
+
+}
+
+type Mutation {
+    post(list: String!, title: String!, description: String!): Card!
+    signup(email: String!, password: String!, name: String!): AuthPayload
+    login(email: String!, password: String!): AuthPayload
+    vote(cardId: ID!): Vote
+
+}
+
+type Vote {
+  id: ID!
+  card: Card!
+  user: User!
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  cards: [Card!]!
+}
+type Card {
+    id: ID!
+    description: String!
+    list: String!
+    title: String!
+    postedBy: User
+    votes: [Vote!]!
+}
