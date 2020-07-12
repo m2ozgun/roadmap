@@ -4,26 +4,27 @@ import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
 export const FEED_QUERY = gql`
-{
-    feed {
-        cards {
-            id
-            title
-            description
-            list
-            postedBy {
+    query feedQuery($id: ID!) {
+        feed(id: $id) {
+            cards {
                 id
-                name
-            }
-            votes {
-                id
-                user {
+                title
+                description
+                list
+                postedBy {
                     id
+                    name
+                }
+                votes {
+                    id
+                    user {
+                        id
+                    }
                 }
             }
         }
     }
-}
+
 `
 
 
@@ -35,13 +36,16 @@ updateCacheAfterVote = (store, createVote, cardId) => {
     const votedCard = data.feed.cards.find(card => card.id === cardId)
     votedCard.votes = createVote.card.votes
     
-    store.writeQuery({ query: FEED_QUERY, data })
+    store.writeQuery({ query: FEED_QUERY, variables: {id: 2}, data })
     }
     
     render() {
         
         return (
-            <Query query={FEED_QUERY}>
+            <>
+
+            <Query query={FEED_QUERY}
+                    variables={{id: 2}}>
                 {({ loading, error, data }) => {
                     if (loading) return <div>Fetching</div>
                     if (error) return <div>Error</div>
@@ -79,6 +83,8 @@ updateCacheAfterVote = (store, createVote, cardId) => {
                     )
             }}
         </Query>
+        </>
+
         )
     }
 }

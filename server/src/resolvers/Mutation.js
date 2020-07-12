@@ -50,6 +50,8 @@ async function signup(parent, args, context, info) {
         list: args.list,
         description: args.description,
         postedBy: { connect: { id: userId } },
+        feed: { connect: { id: Number(args.feedId) } },
+
       }
     })
 
@@ -58,6 +60,19 @@ async function signup(parent, args, context, info) {
     return newCard
   }
 
+  function feed(parent, args, context, info) {
+    const userId = getUserId(context)
+  
+    const newFeed = context.prisma.feed.create({
+      data: {
+        name: args.name,
+      }
+    })
+
+    context.pubsub.publish("NEW_FEED", newFeed)
+
+    return newFeed
+  }
   async function vote(parent, args, context, info) {
     // 1
     const userId = getUserId(context)
@@ -93,4 +108,5 @@ async function signup(parent, args, context, info) {
     login,
     post,
     vote,
+    feed,
   }
