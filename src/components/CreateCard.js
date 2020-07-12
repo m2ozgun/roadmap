@@ -1,4 +1,19 @@
 import React from 'react'
+import gql from 'graphql-tag'
+import { Mutation } from 'react-apollo'
+
+const POST_MUTATION = gql`
+  mutation PostMutation($description: String!, $title: String!, $list: String!) {
+    post(description: $description, title: $title, list: $list) {
+      id
+      title
+      description
+      list
+    }
+  }
+`
+
+
 
 class CreateCard extends React.Component {
     state = {
@@ -34,7 +49,9 @@ class CreateCard extends React.Component {
                         placeholder="The list of card"
                     />               
                 </div>
-                <button>Submit</button>
+                <Mutation mutation={POST_MUTATION} variables={{ description, title, list }}>
+                    {postMutation => <button onClick={postMutation}>Submit</button>}
+                </Mutation>
             </div>
         )
     }
