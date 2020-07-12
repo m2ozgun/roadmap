@@ -34,7 +34,7 @@ class CardList extends React.Component {
                             <div className="cf ph2-ns">
                                 <div className="fl w-33 pa2">
                                 <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">In progress</h1>
-                                        {cardsToRender.map(card => (
+                                    {cardsToRender.map(card => (
                                                 <Card key={card.id} card={card} />
 
                                         ))}       
