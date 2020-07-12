@@ -24,14 +24,14 @@ class CreateCard extends React.Component {
                         value={title}
                         onChange={e => this.setState({ title: e.target.value })}
                         type="text"
-                        placeholder="The title for the link"
+                        placeholder="The title for the card"
                     />
                     <input
                         className="mb2"
                         value={list}
                         onChange={e => this.setState({ list: e.target.value })}
                         type="text"
-                        placeholder="The list of link"
+                        placeholder="The list of card"
                     />               
                 </div>
                 <button>Submit</button>

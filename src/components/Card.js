@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar } from '@fortawesome/free-solid-svg-icons'
-class Link extends React.Component {
+import { faAngleUp } from '@fortawesome/free-solid-svg-icons'
+class Card extends React.Component {
     
     render() {
         return (
@@ -9,8 +9,8 @@ class Link extends React.Component {
                 <div className="f4 ba br3 black-60 mv3 pv2 ph2 flex">
                     <div class="flex items-center justify-center">
                         <a href="#0" class="f5 no-underline black bg-animate hover-bg-green hover-white br3 flex flex-column items-center pa3 ba border-box mr2">
-                        <FontAwesomeIcon icon={faStar} />
-                        <span class="pl1 pt2">21</span>
+                        <FontAwesomeIcon icon={faAngleUp} />
+                        <span class="pt2">21</span>
                         </a>
                     </div>
                     <div>
@@ -25,4 +25,4 @@ class Link extends React.Component {
     }
 }
 
-export { Link as default }
+export { Card as default }
