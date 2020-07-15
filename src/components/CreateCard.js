@@ -4,12 +4,13 @@ import { Mutation } from 'react-apollo'
 import { FEED_QUERY } from './CardList'
 
 const POST_MUTATION = gql`
-  mutation PostMutation($description: String!, $title: String!, $list: String!) {
-    post(description: $description, title: $title, list: $list) {
+  mutation PostMutation($feedId: ID!, $description: String!, $title: String!, $list: String!) {
+    post(feedId: $feedId, description: $description, title: $title, list: $list) {
       id
       title
       description
       list
+
     }
   }
 `
@@ -21,10 +22,12 @@ class CreateCard extends React.Component {
         title: '',
         description: '',
         list: '',
+        feedId: -1,
     }
 
     render() {
-        const { title, description, list } = this.state
+        const { title, description, list, feedId } = this.state
+
         return (
             <div>
                 <div className="flex flex-column mt3">
@@ -48,11 +51,19 @@ class CreateCard extends React.Component {
                         onChange={e => this.setState({ list: e.target.value })}
                         type="text"
                         placeholder="The list of card"
-                    />               
+                    /> 
+                    <input
+                        className="mb2"
+                        value={feedId}
+                        onChange={e => this.setState({ feedId: parseInt(e.target.value) })}
+                        type="text"
+                        placeholder="The feed of card"
+                    /> 
+    
                 </div>
                 <Mutation 
                     mutation={POST_MUTATION} 
-                    variables={{ description, title, list }}
+                    variables={{ feedId, description, title, list  }}
                     onCompleted={() => this.props.history.push('/')}
                     update={(store, { data: { post } }) => {
                         const data = store.readQuery({ query: FEED_QUERY })

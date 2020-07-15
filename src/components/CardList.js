@@ -6,6 +6,8 @@ import gql from 'graphql-tag'
 export const FEED_QUERY = gql`
     query feedQuery($id: ID!) {
         feed(id: $id) {
+            name
+            id
             cards {
                 id
                 title
@@ -42,8 +44,8 @@ updateCacheAfterVote = (store, createVote, cardId) => {
     render() {
         
         return (
-            <>
-
+            <div>
+                <div className="mw8 center ph3-ns">
             <Query query={FEED_QUERY}
                     variables={{id: 2}}>
                 {({ loading, error, data }) => {
@@ -53,38 +55,37 @@ updateCacheAfterVote = (store, createVote, cardId) => {
                     const cardsToRender = data.feed.cards
             
                     return (
-                        <div className="mw8 center ph3-ns">
-                            <div className="cf ph2-ns">
-                                <div className="fl w-33 pa2">
-                                <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">In progress</h1>
-                                    {cardsToRender.map((card, index) => (
-                                                <Card key={card.id} card={card} index={index} updateStoreAfterVote={this.updateCacheAfterVote}/>
-
-                                        ))}       
-                                </div>
                             <div className="fl w-33 pa2">
-                            <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">Soon</h1>
-
-                                        {cardsToRender.map((card, index) => (
-                                                <Card key={card.id} card={card} index={index} updateStoreAfterVote={this.updateCacheAfterVote}/>
-
-                                        ))}                
-                            </div>
-                            <div className="fl w-33 pa2">
-                            <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">Future</h1>
-
+                            <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">{data.feed.name}</h1>
                                         {cardsToRender.map((card, index) => (
                                                 <Card key={card.id} card={card} index={index} updateStoreAfterVote={this.updateCacheAfterVote}/>
 
                                         ))}
                             </div>
-                            </div>
-                        </div>
                     )
             }}
-        </Query>
-        </>
+            </Query>
+            <Query query={FEED_QUERY}
+                    variables={{id: 1}}>
+                {({ loading, error, data }) => {
+                    if (loading) return <div>Fetching</div>
+                    if (error) return <div>Error</div>
+            
+                    const cardsToRender = data.feed.cards
+            
+                    return (
+                            <div className="fl w-33 pa2">
+                            <h1 class="f4 bg-near-white br3 tc black-60 mv0 pv2 ph2">{data.feed.name}</h1>
+                                        {cardsToRender.map((card, index) => (
+                                                <Card key={card.id} card={card} index={index} updateStoreAfterVote={this.updateCacheAfterVote}/>
 
+                                        ))}
+                            </div>
+                    )
+            }}
+            </Query>
+        </div>
+        </div>
         )
     }
 }
