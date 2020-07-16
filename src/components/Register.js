@@ -1,9 +1,36 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {  Icons, Form, Input, Button, Checkbox  } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Mutation } from 'react-apollo'
+import gql from 'graphql-tag'
+import { AUTH_TOKEN } from './constants'
+
+const SIGNUP_MUTATION = gql`
+  mutation SignupMutation($email: String!, $password: String!, $name: String!) {
+    signup(email: $email, password: $password, name: $name) {
+      token
+    }
+  }
+`
 
 //import {  UserOutlined, LockOutlined  } = icons;
-const Register = () => {
+const Register = (props) => {
+  const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
+  const [password, setPassword] = useState('')
+
+
+  
+    const saveUserData = token => {
+      // TODO Find a better way!
+        localStorage.setItem(AUTH_TOKEN, token)
+    }
+
+    const confirm = async data => {
+      const { token } = data.signup
+      saveUserData(token)
+      props.history.push(`/`)
+    }
     const onFinish = values => {
         console.log('Received values of form: ', values);
       };
@@ -19,6 +46,7 @@ const Register = () => {
         >
         <Form.Item
             name="Name"
+			onChange={e => setName(e.target.value)}
             rules={[
               {
                 required: true,
@@ -30,6 +58,8 @@ const Register = () => {
           </Form.Item>
           <Form.Item
             name="email"
+			onChange={e => setEmail(e.target.value)}
+
             rules={[
               {
                 required: true,
@@ -41,6 +71,8 @@ const Register = () => {
           </Form.Item>
           <Form.Item
             name="password"
+			onChange={e => setPassword(e.target.value)}
+
             rules={[
               {
                 required: true,
@@ -56,9 +88,20 @@ const Register = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-form-button">
-              Register
-            </Button>
+
+			<Mutation
+                  mutation={SIGNUP_MUTATION}
+                  variables={{ email, name, password }}
+                  onCompleted={data => confirm(data)}
+              >
+                {mutation => (
+                  <Button type="primary" htmlType="submit" onClick={mutation} className="login-form-button">
+                    Register
+                  </Button>
+
+                )}
+			</Mutation>
+
             Do you have an account? Login.
           </Form.Item>
         </Form>
