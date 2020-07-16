@@ -1,9 +1,34 @@
-import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleUp } from '@fortawesome/free-solid-svg-icons'
-import { AUTH_TOKEN } from './constants'
-import { Mutation } from 'react-apollo'
+import React from 'react';
+import { Typography, List, Button, Space, Col, Card as AntCard } from 'antd';
+import { CaretUpOutlined } from '@ant-design/icons';
+import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
+
+export const FEED_QUERY = gql`
+    query feedQuery($id: ID!) {
+        feed(id: $id) {
+            name
+            id
+            cards {
+                id
+                title
+                description
+                list
+                postedBy {
+                    id
+                    name
+                }
+                votes {
+                    id
+                    user {
+                        id
+                    }
+                }
+            }
+        }
+    }
+
+`
 
 const VOTE_MUTATION = gql`
   mutation VoteMutation($cardId: ID!) {
@@ -25,43 +50,77 @@ const VOTE_MUTATION = gql`
   }
 `
 
-class Card extends React.Component {
+
+const Card = (props) => {
+    const updateCacheAfterVote = (store, createVote, cardId) => {
+        const data = store.readQuery({ query: FEED_QUERY })
+        
+        const votedCard = data.feed.cards.find(card => card.id === cardId)
+        votedCard.votes = createVote.card.votes
+        
+        store.writeQuery({ query: FEED_QUERY, variables: {id: props.feedId}, data })
+        }
     
-    render() {
-        const authToken = localStorage.getItem(AUTH_TOKEN)
-        return (
-            <div>
-                <div className="f4 ba br3 black-60 mv3 pv2 ph2 flex">
-                    <div class="flex items-center justify-center">
-                    {authToken && (
-                        <Mutation
-                            mutation={VOTE_MUTATION}
-                            variables={{ cardId: this.props.card.id }}
-                            update={(store, { data: { vote } }) =>
-                                this.props.updateStoreAfterVote(store, vote, this.props.card.id)
-                            }
-                            >
-                            {voteMutation => (
-                                <p onClick={voteMutation} class="f5 pointer no-underline black bg-animate hover-bg-green hover-white br3 flex flex-column items-center pa3 ba border-box mr2">
-                                    <FontAwesomeIcon icon={faAngleUp} />
-                                    <span class="pt2">{this.props.card.votes.length}</span>
-                                </p>
-                            )}
-                        </Mutation>
+        
+    return (
+        <Query query={FEED_QUERY}
+            variables={{id: props.feedId}}>
+            {({ loading, error, data }) => {
+                if (loading) return <div>Fetching</div>
+                if (error) return <div>Error</div>
 
-                    )}
 
-                    </div>
-                    <div>
-                        <h2 className="lh-copy f5 mb1 mt1">{this.props.card.title} </h2>
-                        <p className="lh-copy f6 mb1 mt1">{this.props.card.description}</p>
-                        <p className="lh-copy f6 i mb1 mt1">{this.props.card.createdAt}</p>
-                    </div>
+                return (
+                    <Col span={8}>
+                    <AntCard type="inner" title={data.feed.name} extra={<a href="#">More</a>}>
+                    <List
+                        itemLayout="vertical"
+                        dataSource={data.feed.cards}
+                        renderItem={item => {
+                            return (
+                            <List.Item>
+                                <List.Item.Meta
+                                avatar={
+                                    <Mutation
+                                        mutation={VOTE_MUTATION}
+                                        variables={{ cardId: item.id }}
+                                        update={(store, { data: { vote } }) =>
+                                            updateCacheAfterVote(store, vote, item.id)
+                                        }
+                                        >
+                                        {voteMutation => (
 
-                </div>
-            </div>
-        )
-    }
+                                            <Button type="secondary" shape="rectangle" size="small" onClick={voteMutation}>
+                                                <Space direction="vertical">
+                                                    <CaretUpOutlined />
+                                                    <Typography.Text>{item.votes.length}</Typography.Text>
+
+                                                </Space>
+                                            </Button>
+
+                                        )}
+                                    </Mutation>
+                                   
+                                }
+                                title={item.title}
+                                description={item.description}
+                                
+                                />
+                                
+                            </List.Item>
+                            )
+                        }
+                        
+                       }
+                    />
+
+                    </AntCard>
+                    </Col>
+                )
+        }}
+        </Query>
+
+    )
 }
 
 export { Card as default }
